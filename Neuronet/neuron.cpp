@@ -31,6 +31,29 @@ void Neuron::updateInputWeights(Layer &prevLayer)
 	}
 }
 
+double Neuron::sumDOW(const Layer &nextLayer) const
+{
+	double sum = 0.0;
+	for (unsigned n = 0; n < nextLayer.size() - 1; ++n)
+	{
+		sum += outputWeights[n].weight * nextLayer[n].gradient;
+	}
+
+	return sum;
+}
+
+void Neuron::clacHiddenGradients(const Layer &nextLayer)
+{
+	double dow = sumDOW(nextLayer);
+	gradient = dow * Neuron::activationFunctionDerivative(outputVal);
+}
+
+void Neuron::clacOutputGradients(double targetsVals)
+{
+	double delta = targetsVals - outputVal;
+	gradient = delta * Neuron::activationFunctionDerivative(outputVal);
+}
+
 double Neuron::activationFunction( double x )
 {
 	return tanh(x);
